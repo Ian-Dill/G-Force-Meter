@@ -6,7 +6,6 @@
 *Delete the old dot and replace anything under it
 *Draw a dot on the scren at the pixel values corresponding to the x and y data
 *
-*
 */
 
 #include "Modulino.h"
@@ -26,7 +25,7 @@ ModulinoMovement movement;
 Adafruit_ILI9341 tft(TFT_CS, TFT_DC, TFT_RST);
 
 //Meter background object
-GFXcanvas1 background(320, 240);
+GFXcanvas1 background(240, 320);
 
 //global x y z acceleration values from accelerometer
 float x, y, z;
@@ -37,29 +36,17 @@ void setup() {
     movement.begin();
 
     tft.begin();
-    tft.setRotation(1);
+    tft.setRotation(0);
 
-    background.setRotation(0);
-    background.fillScreen(0);
-
-    background.drawCircle(160, 120, 110, 1);
-    background.drawFastVLine(160, 10, 220, 1);
-    background.drawFastHLine(50, 120, 220, 1);
-
-    tft.drawBitmap(
-        0, 0,
-        background.getBuffer(),
-        320, 240,
-        ILI9341_WHITE,
-        ILI9341_BLACK
-    );
+    drawBackground();
+    tft.print("OK");
+    tft.fillCircle(50, 50, 5, 0xf4bf);
 }
 
 void loop() {
     readAcceleration();
     printCoords();
     drawDot();
-    //reDrawBackground();
     delay(34);
 }
 
@@ -75,22 +62,16 @@ void readAcceleration() {
 // Print accelerometer data
 void drawDot() {
     float scale = 0.0091;
-    float rawX = 160 - (x / scale);
+    float rawX = 120 - (x / scale);
     uint16_t xCord = static_cast<uint16_t>(rawX);
 
-    float rawY = 120 - (y / scale);
+    float rawY = 160 - (y / scale);
     uint16_t yCord = static_cast<uint16_t>(rawY);
 
     //just x for now
     tft.fillCircle(xCord, yCord, 4, ILI9341_RED);
 }
 
-void redrawScreen(){
-    tft.fillScreen(ILI9341_BLACK);
-    tft.drawCircle(160, 120, 110, ILI9341_WHITE);
-    tft.drawFastVLine(160, 10, 220, ILI9341_WHITE);
-    tft.drawFastHLine(50, 120, 220, ILI9341_WHITE);
-}
 
 void printCoords() {
     Serial.print("X: ");
@@ -99,21 +80,40 @@ void printCoords() {
     Serial.println(y);
 }
 
+//creating the bg bitmat that we can refrence later
+void drawBackground(){
+    background.setRotation(0);
+    background.fillScreen(0);
+    
+    background.drawCircle(120, 160, 110, 1);
+    background.drawCircle(120, 160, 55, 1);
+    background.drawFastVLine(120, 50, 220, 1);
+    background.drawFastHLine(10, 160, 220, 1);
 
-void reDrawBackground(){
-    background.fillScreen(ILI9341_BLACK);
+    background.setTextColor(1);
+    background.setTextSize(1);
+    background.setTextWrap(false);
 
-    //x, y, rad, clor
-    background.drawCircle(160, 120, 110, ILI9341_WHITE);
-    background.drawFastVLine(160, 10, 220, ILI9341_WHITE);
-    background.drawFastHLine(50, 120, 220, ILI9341_WHITE);
+    background.setCursor(125, 55);
+    background.print("1.0");
 
-    // Copy the canvas to the actual TFT
-    tft.drawBitmap(
-        0, 0,
-        background.getBuffer(),
-        240, 320,
-        ILI9341_WHITE,
-        ILI9341_BLACK
-    );
+    background.setCursor(125, 110);
+    background.print("0.5");
+
+    background.setCursor(125, 165);
+    background.print("0");
+
+    background.setCursor(125, 200);
+    background.print("-0.5");
+
+    background.setCursor(125, 255);
+    background.print("-1.0");
+
+    background.setCursor(110, 35);
+    background.print("BRAKE");
+
+    background.setCursor(110, 280);
+    background.print("ACCEL");
+
+    tft.drawBitmap(0, 0, background.getBuffer(), 240, 320, ILI9341_WHITE, ILI9341_BLACK);
 }
