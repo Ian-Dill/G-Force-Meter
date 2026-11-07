@@ -39,14 +39,14 @@ void setup() {
     tft.setRotation(0);
 
     drawBackground();
-    tft.print("OK");
-    tft.fillCircle(50, 50, 5, 0xf4bf);
 }
 
 void loop() {
     readAcceleration();
     printCoords();
     drawDot();
+    delay(300);
+    eraseDot();
     delay(34);
 }
 
@@ -116,4 +116,38 @@ void drawBackground(){
     background.print("ACCEL");
 
     tft.drawBitmap(0, 0, background.getBuffer(), 240, 320, ILI9341_WHITE, ILI9341_BLACK);
+}
+
+//Function to get the coords of the current dot and replace all of its pixels from ones gotten fro the bg
+void eraseDot(){
+    ///first get the current dot pos in pixels
+    float scale = 0.0091;
+    float rawX = 120 - (x / scale);
+    uint16_t xCord = static_cast<uint16_t>(rawX);
+
+    float rawY = 160 - (y / scale);
+    uint16_t yCord = static_cast<uint16_t>(rawY);
+
+    Serial.print(" | X pixel : ");
+    Serial.println(xCord);
+
+    Serial.print(" | Y pixel : ");
+    Serial.println(yCord);
+    //then replace all the pixels that the dot currently occupies with ones from the bg object at the corresponding location
+    for (int i = -4; i < 5; i++){
+        for (int j = -4; j < 5; j++)
+        {
+            tft.drawPixel(xCord + i, yCord + j, getBgColor(xCord + i, yCord + j));
+        }
+    }
+}
+
+uint16_t getBgColor(uint16_t x, uint16_t y)
+{
+    if (background.getPixel(x, y)){
+        return ILI9341_WHITE;
+    }
+    else{
+        return  ILI9341_BLACK;
+    }
 }
