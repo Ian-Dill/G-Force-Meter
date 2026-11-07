@@ -11,7 +11,11 @@
 #include "Modulino.h"
 #include <Adafruit_ILI9341.h>
 #include <Adafruit_GFX.h>
-
+#include "frame1.h"
+#include "frame2.h"
+#include "frame3.h"
+#include "frame4.h"
+#include "frame5.h"
 
 //Definine pins for communication via SPI with the tft
 #define TFT_CS  D10
@@ -37,6 +41,9 @@ void setup() {
 
     tft.begin();
     tft.setRotation(0);
+
+    miotAnimation();
+    delay(300);
 
     drawBackground();
 }
@@ -150,4 +157,21 @@ uint16_t getBgColor(uint16_t x, uint16_t y)
     else{
         return  ILI9341_BLACK;
     }
+}
+
+void miotAnimation(){
+    tft.fillScreen(ILI9341_BLACK);
+    int16_t x = (tft.width()  - 240) / 2;
+    int16_t y = (tft.height() - 240) / 2;
+
+    tft.drawRGBBitmap(x, y, frame1, 240, 240);
+    delay(300);
+    tft.drawRGBBitmap(x, y, frame2, 240, 240);
+    delay(300);
+    tft.drawRGBBitmap(x, y, frame3, 240, 240);
+    delay(300);
+    tft.drawRGBBitmap(x, y, frame4, 240, 240);
+    delay(300);
+    tft.drawRGBBitmap(x, y, frame5, 240, 240);
+
 }
