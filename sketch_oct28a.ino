@@ -52,9 +52,8 @@ void loop() {
     readAcceleration();
     printCoords();
     drawDot();
-    delay(300);
+    delay(100);
     eraseDot();
-    delay(34);
 }
 
 // Read accelerometer data
@@ -165,13 +164,12 @@ void miotAnimation(){
     int16_t y = (tft.height() - 240) / 2;
 
     tft.drawRGBBitmap(x, y, frame1, 240, 240);
-    delay(300);
+    delay(200);
     tft.drawRGBBitmap(x, y, frame2, 240, 240);
-    delay(300);
+    delay(200);
     tft.drawRGBBitmap(x, y, frame3, 240, 240);
-    delay(300);
+    delay(200);
     tft.drawRGBBitmap(x, y, frame4, 240, 240);
     delay(300);
     tft.drawRGBBitmap(x, y, frame5, 240, 240);
-
 }
